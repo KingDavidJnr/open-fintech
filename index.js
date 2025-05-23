@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const { connectDB, syncDB } = require('./config/db.config')
 
 // Initialize Express app
 const app = express();
@@ -27,6 +28,12 @@ app.get("/", (req, res) => {
 
 // Get the port from environment variables (default to 3000 if not set)
 const port = process.env.PORT;
+
+// Authenticate DB Before Server app starts
+connectDB();
+
+// Synchronize the database with models
+syncDB();
 
 // Start the server
 app.listen(port, () => {
