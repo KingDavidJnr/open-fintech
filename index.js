@@ -4,10 +4,21 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const { connectDB, syncDB } = require('./config/db.config')
+const { connectDB, syncDB } = require("./config/db.config");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+const path = require("path");
 
 // Initialize Express app
 const app = express();
+
+// Load the YAML file
+const swaggerDocument = YAML.load(
+  path.join(__dirname, "./src/docs/swagger.yaml")
+);
+
+// Middleware
+app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //update the numbers if the number of proxy increase
 app.set("trust proxy", 1);

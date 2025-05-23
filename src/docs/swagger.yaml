@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: Open Fintech API
+  version: 1.0.0
+  description: API documentation for open-source fintech backend
+  engineered-by: David Oduse
+
+servers:
+  - url: http://localhost:6060/v1/docs
+
+tags:
+  - name: User profile
+    description: User sign-up, authentication and account management
+  - name: Transactions
+    description: Transaction tracking and categorization
+  - name: Savings
+    description: Savings goals and gamification
+  - name: Investments
+    description: Investment plans and milestones
+  - name: Credit Scoring
+    description: Dynamic credit analysis
+  - name: Payment Splitting
+    description: Bill and expense splitting features
+
+paths:
+  /v1/user/signup:
+    post:
+      tags:
+        - User profile
+      summary: User sign-up
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User registered successfully
