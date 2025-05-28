@@ -15,6 +15,10 @@ class UserService {
     }
   }
 
+  async verifyUserEmail(user_id) {
+    return await User.update({ is_verified: true }, { where: { user_id } });
+  }
+
   // Get a single user by ID
   async getUserById(userId) {
     try {

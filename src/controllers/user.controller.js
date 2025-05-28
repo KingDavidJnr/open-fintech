@@ -82,7 +82,7 @@ class UserController {
       });
 
       // Send response
-      res.status(200).json({
+      res.status(201).json({
         message: "User account created successfully",
         user: userResponse,
       });
@@ -99,6 +99,32 @@ class UserController {
       return res
         .status(500)
         .json({ message: "Internal server error - Failed to create user" });
+    }
+  }
+
+  async verifyEmail(req, res) {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+      return res.status(400).json({ message: "Invalid verification link" });
+    }
+
+    try {
+      const user = await userService.getUserById(user_id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.is_verified) {
+        return res.redirect("/email-already-verified");
+      }
+
+      await userService.verifyUserEmail(user_id);
+
+      return res.redirect("/email-verified-success");
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      return res.status(500).json({ message: "Failed to verify email" });
     }
   }
 
