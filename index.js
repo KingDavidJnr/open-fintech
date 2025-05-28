@@ -8,6 +8,7 @@ const { connectDB, syncDB } = require("./config/db.config");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const path = require("path");
+const routes = require("./src/routes/index.route");
 
 // Initialize Express app
 const app = express();
@@ -17,20 +18,29 @@ const swaggerDocument = YAML.load(
   path.join(__dirname, "./src/docs/swagger.yaml")
 );
 
-// Middleware
-app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 //update the numbers if the number of proxy increase
 app.set("trust proxy", 1);
 
 // Define Global Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Middleware setup
-app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+); // Enable Cross-Origin Resource Sharing (CORS)
+
 app.use(cookieParser()); // Parse cookies in request headers
 app.use(morgan("common"));
 app.use(helmet());
+
+// Swagger docs route
+app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Define the base of all routes
+app.use("/v1", routes);
 
 // Simple test route to verify the app is working
 app.get("/", (req, res) => {
