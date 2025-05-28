@@ -6,7 +6,7 @@ info:
   engineered-by: David Oduse
 
 servers:
-  - url: http://localhost:6060/v1/docs
+  - url: https://openfy.onrender.com
 
 tags:
   - name: User profile
@@ -23,7 +23,7 @@ tags:
     description: Bill and expense splitting features
 
 paths:
-  /v1/user/signup:
+  /v1/user/register:
     post:
       tags:
         - User profile
@@ -35,10 +35,14 @@ paths:
             schema:
               type: object
               properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
                 email:
                   type: string
                 password:
                   type: string
       responses:
         "201":
-          description: User registered successfully
+          description: User account created successfully

@@ -42,6 +42,33 @@ app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Define the base of all routes
 app.use("/v1", routes);
 
+// Serve static files from src/public
+app.use(express.static(path.join(__dirname, "src", "public", "pages")));
+
+app.get("/email-verified-success", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "src",
+      "public",
+      "pages",
+      "email-verified-success.html"
+    )
+  );
+});
+
+app.get("/email-already-verified", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "src",
+      "public",
+      "pages",
+      "email-already-verified.html"
+    )
+  );
+});
+
 // Simple test route to verify the app is working
 app.get("/", (req, res) => {
   res.status(200).send("Hello, world! Open Fintech app is running!");
