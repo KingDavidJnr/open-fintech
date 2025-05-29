@@ -128,13 +128,59 @@ class UserController {
     }
   }
 
-  async login(req, res, next) {
+  async login(req, res) {
     try {
-      const { user, token } = await userService.loginUser(req.body);
-      res.cookie("token", token, { httpOnly: true });
-      res.json({ user });
+      const { email, password } = req.body;
+
+      // Validate request body
+      if (!email || !password) {
+        return res
+          .status(400)
+          .json({ message: "Email and password are required!" });
+      }
+
+      // Check if user exists
+      const user = await userService.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "User not found!" });
+      }
+
+      // Verify password
+      const isPasswordValid = await comparePasswords(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid email or password!" });
+      }
+
+      // Generate JWT token
+      const token = generateToken(user.user_id);
+
+      // Set cookie with token for 30 minutes
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 30 * 60 * 1000, // 30 mins
+        sameSite: "None",
+      });
+
+      // Respond with success message and user info (excluding sensitive info)
+      const userResponse = {
+        user_id: user.user_id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        is_verified: user.is_verified,
+      };
+
+      return res.status(200).json({
+        message: "Login successful",
+        user: userResponse,
+      });
     } catch (error) {
-      next(error);
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Login failed", error: error.message });
     }
   }
 
